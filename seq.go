@@ -218,3 +218,18 @@ func (s *Seq) Swap(i, j int) {
 	}
 	s.elem[ii], s.elem[jj] = s.elem[jj], s.elem[ii]
 }
+
+// Export -- returns all the elements of `s` as a slice.
+func (s *Seq) Export() []interface{} {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+	t := make([]interface{}, s.size)
+	for i := range t {
+		j := s.orig + i
+		if j >= len(s.elem) {
+			j -= len(s.elem)
+		}
+		t[i] = s.elem[j]
+	}
+	return t
+}
